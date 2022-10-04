@@ -1,15 +1,20 @@
-Як створювати паки в R
+How to Create an R Package
 ========================================================
-author: Богдан Дюжин, Семенюк Орест
-date: https://github.com/mcpohuist/create_paket_in_R
+author: Irene Steves, Mitchell Maier
+date: https://github.com/isteves/r-pkg-intro
 autosize: true
 
-Для чого писати власний пакет?
+Why write a package?
 ========================================================
 
-Насправді це доволі зручно, коли ви робите власні функції, і хочете їх об'єднати в один пакет і тому подібне. Також щоб автоматизувати певні робочі процеси, пришвидшити роботу за допомогою наперед визначених методів, функцій.
+- organize code and data
+- reuse code more easily
+- test code
+- share code with others
 
-Структура пакету
+> “Seriously, it doesn’t have to be about sharing your code (although that is an added benefit!). It is about saving yourself time.” --Hilary Parker
+
+Package structure
 ========================================================
 
 - R code (`/R`)
@@ -26,24 +31,32 @@ autosize: true
 - Installed files (`/inst`)
 - Other components
 
+Resources
+========================================================
+
+- [Writing an R package from scratch](https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/) blogpost by Hilary Parker
+- [R packages](http://r-pkgs.had.co.nz/) book by Hadley Wickham
+- Official [writing R extensions](https://cran.r-project.org/doc/manuals/R-exts.html#Creating-R-packages) guide
+
+- https://github.com/isteves/r-pkg-intro (this presentation)
+
+Create a package in RStudio
 ========================================================
 
 ## Option 1
 File --> New Project --> New Directory --> R Package
 
 ## Option 2
-
-```r
+```{r eval = FALSE}
 #install.package("devtools")
-devtools::create("~/Desktop/greetings")
+usethis::create_package("~/Desktop/greetings")
 ```
 
-*Вимоги до іменування пакетів: (1) лише літери, цифри та крапки; (2) має починатися з літери; (3) не може закінчуватися крапкою*
+*Package naming requirements: (1) only letters, numbers, and periods; (2) must start with a letter; (3) cannot end with a period*
 
-Написання функції
+Write a function
 ========================================================
-
-```r
+```{r}
 say_aloha <- function(name, print = TRUE) {
 
   message <- paste("Aloha,",
@@ -60,21 +73,19 @@ say_aloha <- function(name, print = TRUE) {
 }
 ```
 
-*Як завжди, не забувайте писати описові назви функцій, які не збігаються з існуючими функціями*
+*As always, remember to write descriptive function names that don't overlap with existing functions*
 
-
-```r
+```{r, eval = FALSE}
 install.packages("crayon")
 devtools::install_github("hadley/emo")
 ```
 
-Додайте перевірки до своєї функції
+Add checks to your function
 ========================================================
 
 These should be included _inside_ your function:
 
-
-```r
+```{r, eval = FALSE}
 stopifnot(is.logical(print))
 
 if (!(is.character(name))) {
@@ -82,26 +93,25 @@ if (!(is.character(name))) {
 }
 ```
 
-Перевірити вхідні дані функції легко зробити, і це позбавляє від багатьох проблем з налагодженням, якщо (а) зупинити функцію раніше і (б) надати вам зрозуміле повідомлення про помилку.
+Checking inputs to the function is easy to do and saves lots of debugging headaches later on by (a) stopping the function early and (b) giving you an understandable error message.
 
-Напишіть свою документацію
+Write your documentation
 ========================================================
 Use Tools --> Roxygen Quick Reference as a template
 
 Common sections:
 - title
 - `@description`
-- `@param` - параметри/аргументи
-- `@examples` - приклади використання вашої функції
-- `@export` - зробити цю функцію доступною для користувачів
-- `@import`/`@importFrom` - імпорт пакетів/функцій з інших пакетів; використовується для створення `NAMESPACE`
+- `@param` - parameters/arguments
+- `@examples` - examples of how to use your function
+- `@export` - make this function available to package users (helper functions do not need this)
+- `@import`/`@importFrom` - import packages/functions from other packages; used to generate the `NAMESPACE`
 
-*Використовуйте виклики імпорту замість викликів `library` або `require`*
+*Use import calls instead of `library` or `require` calls*
 
-Задокоментуйте вашу функцію:
+Document your function:
 ========================================================
-
-```r
+```{r}
 #' Say Aloha
 #'
 #' @description This function will say aloha to any inputted name.
@@ -123,22 +133,20 @@ Common sections:
 ```
 
 
-Задокоментуйте ваш пакет:
+Document your package:
 ========================================================
 
-Автоматично створює файли довідки (`/man`) і файл `NAMESPACE`:
+Auto-generates your help files (`/man`) and `NAMESPACE` file:
 
-
-```r
+```{r eval = FALSE}
 # delete any *.Rd or NAMESPACE files before running for the first time
 devtools::document()
 ```
 
-Перевірте ваш пакет
+Check your package
 ========================================================
 
-
-```r
+```{r eval = FALSE}
 devtools::check()
 ```
 
@@ -150,10 +158,9 @@ See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
 manual.
 ```
 
-Опис файлу
+Description File
 ========================================================
-
-```r
+```{r, eval = FALSE}
 Package: greetings
 Title: What the Package Does (one line, title case)
 Version: 0.0.0.9000
@@ -166,16 +173,15 @@ LazyData: true
 RoxygenNote: 6.0.1
 ```
 
-Відредагуйте опис файлу
+Edit Description File
 ========================================================
-
-```r
+```{r, eval = FALSE}
 Package: greetings
 Title: Say Aloha to a Friend
 Version: 0.1
 Authors@R: c(
-  person("Bogdan", "Orest", comment = "https://github.com/mcpohuist", role = c("aut")),
-  person("Diuzhun", "Semenuk", email = "duzunbogdan@gmail.com", role = c("cre", "aut")))
+  person("Irene", "Steves", comment = "https://github.com/isteves", role = c("aut")),
+  person("Mitchell", "Maier", email = "mmaier@ucsb.edu", role = c("cre", "aut")))
 Description: This package provides a pleasant way to say hello or goodbye to a friend.
 Depends: R (>= 3.3.0)
 License: CC0
@@ -187,52 +193,50 @@ Remotes: hadley/emo
 Suggests: testthat
 ```
 
-Провірте ваш пакет знову 
+Check your package again
 ========================================================
 
-
-```r
+```{r eval = FALSE}
 devtools::check()
 ```
 
-Модульні тести
+Unit tests
 ========================================================
 
-Замість того, щоб перевіряти ваші функції ad-hoc, напишіть **модульні тести**, щоб формалізувати ці перевірки та переконатися, що ваша функція працює так, як ви думаєте!
-- менше помилок
-- краща структура коду
-- прості перезапуски
-- надійний код
+Rather than checking your functions ad-hoc, write **unit tests** to formalize these checks and make sure your function works the way you think it should!
 
+- fewer bugs
+- better code structure
+- easier restarts
+- robust code
 
-```r
-devtools::use_testthat()
+```{r eval = FALSE}
+usethis::use_testthat()
 ```
 
-Напишіть модульний тест
+Write a unit test
 ========================================================
-Новий скрипт на R: `test_FUNCTION_NAME.R`
+New R script: `test_FUNCTION_NAME.R`
 
-
-```r
+```{r, eval = FALSE}
 context("say_aloha function")
 
 test_that("function takes one input", {
-  testthat::expect_error(say_aloha(c("Bogdan", "Orest")))
+  testthat::expect_error(say_aloha(c("Irene", "Mitchell")))
 })
 ```
 
-Під'єднання до GitHub
+Connect to GitHub
 ========================================================
-1. Створіть *порожнє* місце GitHub з такою ж назвою
+1. Create an *empty* GitHub repo with the same name
 
-2. У терміналі (Інструменти --> Shell) налаштуйте ім’я користувача та електронну адресу, якщо ви цього ще не зробили:
+2. In the Terminal (Tools --> Shell), set up your user name and email if you haven't already:
 ```
 git config --global user.name YOUR_NAME
 git config --global user.email GITHUB_EMAIL
 ```
 
-3. Зв’яжіться з GitHub і надішліть локальні файли у свій онлайн-репозиторій GitHub
+3. Link to GitHub and push your local files to your online GitHub repository
 ```
 git remote add origin https://github.com/USERNAME/PACKAGE_NAME.git
 # make a commit
@@ -245,8 +249,7 @@ Make sure your package passes all the checks and get it on GitHub!
 
 Install your neighbor's package and take a look at their documentation.
 
-
-```r
+```{r eval = FALSE}
 devtools::install_github("username/reponame")
 # ?reponame::function_name
 ```
@@ -275,9 +278,8 @@ Log in to [Travis](https://travis-ci.org/) with GitHub and use it to:
 .travis.yml
 ========================================================
 
-
-```r
-devtools::use_travis()
+```{r eval = FALSE}
+usethis::use_travis()
 ```
 
 ```
@@ -296,18 +298,16 @@ Add data files
 id: data-files
 
 Can create data files (e.g. `View(iris)`)
-
-```r
+```{r, eval = FALSE}
 friends <- c("Mitchell", "Irene")
-devtools::use_data(friends)
+usethis::use_data(friends)
 ```
 
 Document data files
 ========================================================
 Create a new `R/data.R` file
 
-
-```r
+```{r, eval = FALSE}
 #' Friends list
 #'
 #' A list of friends I like to say aloha to.
@@ -316,16 +316,14 @@ Create a new `R/data.R` file
 "friends"
 ```
 
-
-```r
+```{r eval = FALSE}
 devtools::document()
 ```
 
 Document package
 ========================================================
 Create a new `R/package_name.R` file
-
-```r
+```{r, eval = FALSE}
 #' greetings
 #'
 #' @description A package that provides a pleasant way to say hello or goodbye to a friend.
@@ -336,15 +334,13 @@ Create a new `R/package_name.R` file
 "_PACKAGE"
 ```
 
-
-```r
+```{r eval = FALSE}
 devtools::document()
 ```
 
 Install package
 ========================================================
-
-```r
+```{r, eval = FALSE}
 devtools::install()
 ```
 
@@ -360,9 +356,8 @@ id: vignettes
 
 Vignettes are Rmds that come bundled with your package. Rather than writing about a single function, it's useful to describe how your functions can be used together.
 
-
-```r
-devtools::use_vignette("say-aloha-to-your-friends")
+```{r, eval = FALSE}
+usethis::use_vignette("say-aloha-to-your-friends")
 ```
 
 Viewing vignettes
@@ -370,8 +365,7 @@ Viewing vignettes
 
 When you install a package `devtools::install_github()` and friends, the vignette-building process is skipped by default. To unskip and checkout your vignette, run:
 
-
-```r
+```{r eval = FALSE}
 devtools::install(build_vignettes = TRUE)
 # devtools::install_github(build_vignettes = TRUE)
 browseVignettes("greetings")
@@ -381,8 +375,7 @@ browseVignettes("greetings")
 
 Explore package
 ========================================================
-
-```r
+```{r, eval = FALSE}
 greetings::say_aloha(greetings::friends)
 ```
 
@@ -390,8 +383,7 @@ greetings::say_aloha(greetings::friends)
 Aloha, Mitchell 🌴 ☀️ 🌊 Aloha, Irene 🌴 ☀️ 🌊
 ```
 
-
-```r
+```{r, eval = FALSE}
 .rs.restartR() #restart R to see documentation
 ?greetings::say_aloha
 ?greetings::friends
